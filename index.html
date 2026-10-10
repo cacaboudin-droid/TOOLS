@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0b0b10">
+<title>ToolBox Lookup</title>
+
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --bg:#0b0b10;
+  --panel:#12121a;
+  --border:#292936;
+  --text:#eeeeF5;
+  --yellow:#ffcc00;
+  --purple:#bd00ff;
+  --blue:#00d4ff;
+  --cyan:#00f2ea;
+  --green:#0aff0a;
+}
+
+* {
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+  font-family:'JetBrains Mono',monospace;
+}
+
+body {
+  min-height:100vh;
+  background:radial-gradient(ellipse at top,#191326,#08080c 65%);
+  color:var(--text);
+  padding:20px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.container {
+  width:100%;
+  max-width:1000px;
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:16px;
+  overflow:hidden;
+  box-shadow:0 0 35px #0009;
+}
+
+.header {
+  text-align:center;
+  padding:26px 15px;
+  border-bottom:1px solid var(--border);
+}
+
+.logo {
+  font-size:clamp(22px,5vw,35px);
+  font-weight:bold;
+  letter-spacing:2px;
+}
+
+.logo span {color:var(--purple);}
+
+.subtitle {
+  margin-top:10px;
+  color:#85859a;
+  font-size:11px;
+}
+
+.tabs-header {
+  display:grid;
+  grid-template-columns:repeat(5,minmax(0,1fr));
+  background:#0e0e14;
+  border-bottom:1px solid var(--border);
+}
+
+.tab-btn {
+  background:transparent;
+  color:#88889a;
+  border:0;
+  border-bottom:3px solid transparent;
+  padding:17px 4px;
+  cursor:pointer;
+  font-size:11px;
+  font-weight:bold;
+  transition:.2s;
+}
+
+.tab-btn span {
+  display:block;
+  margin-top:7px;
+  font-size:17px;
+}
+
+.tab-btn.active {color:white;}
+.tab-btn[data-tab="snap"].active {border-color:var(--yellow);}
+.tab-btn[data-tab="ip"].active {border-color:var(--purple);}
+.tab-btn[data-tab="phone"].active {border-color:var(--blue);}
+.tab-btn[data-tab="tiktok"].active {border-color:var(--cyan);}
+.tab-btn[data-tab="terminal"].active {border-color:var(--green);}
+
+.content-area {padding:25px;}
+
+.content-section {
+  display:none;
+  animation:appear .25s ease;
+}
+
+.content-section.active {display:block;}
+
+@keyframes appear {
+  from {opacity:0;transform:translateY(5px);}
+  to {opacity:1;transform:translateY(0);}
+}
+
+.section-title {
+  font-size:19px;
+  margin-bottom:10px;
+}
+
+.description {
+  color:#9999aa;
+  font-size:12px;
+  line-height:1.8;
+  margin-bottom:23px;
+}
+
+.search-form {
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+.search-input {
+  flex:1;
+  min-width:0;
+  width:100%;
+  padding:15px;
+  background:#09090e;
+  color:white;
+  border:1px solid var(--border);
+  border-radius:8px;
+  outline:none;
+  font-size:13px;
+}
+
+.search-input:focus {border-color:var(--accent);}
+
+.search-btn {
+  padding:14px 19px;
+  border:1px solid var(--accent);
+  background:color-mix(in srgb,var(--accent) 12%,#111);
+  color:var(--accent);
+  border-radius:8px;
+  font-size:12px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.search-btn:hover {filter:brightness(1.3);}
+
+.result-box {
+  margin-top:22px;
+  padding:17px;
+  border:1px solid var(--border);
+  border-left:3px solid var(--accent);
+  border-radius:8px;
+  background:#09090e;
+  min-height:65px;
+  font-size:12px;
+  line-height:1.9;
+  overflow-wrap:anywhere;
+}
+
+.result-box a {
+  color:var(--accent);
+  text-decoration:none;
+}
+
+.result-box a:hover {text-decoration:underline;}
+
+.result-label {
+  color:var(--accent);
+  font-weight:bold;
+  margin-bottom:8px;
+}
+
+.hint {
+  margin-top:16px;
+  color:#77778a;
+  font-size:10px;
+  line-height:1.8;
+}
+
+#snap {--accent:var(--yellow);}
+#ip {--accent:var(--purple);}
+#phone {--accent:var(--blue);}
+#tiktok {--accent:var(--cyan);}
+#terminal {--accent:var(--green);}
+
+#terminal .result-box {
+  color:var(--green);
+  min-height:170px;
+  white-space:pre-wrap;
+}
+
+#terminal .search-input {border-color:#174117;}
+
+.footer {
+  text-align:center;
+  color:#686879;
+  font-size:10px;
+  padding:18px;
+  border-top:1px solid var(--border);
+}
+
+@media(max-width:600px) {
+  body {padding:10px;align-items:flex-start;}
+  .container {margin-top:10px;}
+  .header {padding:22px 10px;}
+  .tabs-header {grid-template-columns:repeat(3,minmax(0,1fr));}
+  .tab-btn {padding:13px 2px;font-size:10px;}
+  .content-area {padding:19px 14px;}
+  .search-form {flex-direction:column;}
+  .search-btn {width:100%;padding:14px;}
+  .section-title {font-size:16px;}
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+  <header class="header">
+    <div class="logo">TOOLBOX <span>LOOKUP</span></div>
+    <p class="subtitle">PUBLIC INFORMATION • SEARCH TOOLS • CYBER LAB</p>
+  </header>
+
+  <nav class="tabs-header">
+    <button class="tab-btn active" data-tab="snap">
+      SNAPCHAT <span>👻</span>
+    </button>
+    <button class="tab-btn" data-tab="ip">
+      IP LOOKUP <span>🌐</span>
+    </button>
+    <button class="tab-btn" data-tab="phone">
+      NUMÉRO <span>📞</span>
+    </button>
+    <button class="tab-btn" data-tab="tiktok">
+      TIKTOK <span>🎵</span>
+    </button>
+    <button class="tab-btn" data-tab="terminal">
+      TERMINAL <span>⌨️</span>
+    </button>
+  </nav>
+
+  <main class="content-area">
+
+    <!-- SNAPCHAT -->
+    <section class="content-section active" id="snap">
+      <h2 class="section-title">Snapchat Lookup</h2>
+      <p class="description">
+        Recherche un nom d'utilisateur et ouvre son profil public.
+      </p>
+
+      <form class="search-form" id="snapForm">
+        <input class="search-input" id="snapInput"
+          placeholder="Nom d'utilisateur Snapchat..."
+          autocomplete="off" required>
+        <button class="search-btn" type="submit">RECHERCHER ↗</button>
+      </form>
+
+      <div class="result-box" id="snapResult" aria-live="polite">
+        <div class="result-label">[ SNAP ENGINE ]</div>
+        Entre un nom d'utilisateur pour commencer.
+      </div>
+
+      <p class="hint">
+        Cette fonction ouvre un profil public si celui-ci existe.
+        Elle ne donne pas accès aux comptes privés, messages ou mots de passe.
+      </p>
+    </section>
+
+    <!-- IP LOOKUP -->
+    <section class="content-section" id="ip">
+      <h2 class="section-title">IP Address Lookup</h2>
+      <p class="description">
+        Consulte les informations publiques associées à une adresse IP.
+      </p>
+
+      <form class="search-form" id="ipForm">
+        <input class="search-input" id="ipInput"
+          placeholder="Exemple : 8.8.8.8"
+          inputmode="decimal" autocomplete="off" required>
+        <button class="search-btn" type="submit">ANALYSER ↗</button>
+      </form>
+
+      <div class="result-box" id="ipResult" aria-live="polite">
+        <div class="result-label">[ IP ENGINE ]</div>
+        En attente d'une adresse IP.
+      </div>
+
+      <p class="hint">
+        Le résultat dépend du service externe. Une IP ne permet généralement
+        pas de déterminer l'adresse exacte d'une personne.
+      </p>
+    </section>
+
+    <!-- PHONE -->
+    <section class="content-section" id="phone">
+      <h2 class="section-title">Phone Number Search</h2>
+      <p class="description">
+        Recherche des références publiques concernant un numéro de téléphone.
+      </p>
+
+      <form class="search-form" id="phoneForm">
+        <input class="search-input" id="phoneInput"
+          placeholder="Exemple : +33 6 12 34 56 78"
+          type="tel" autocomplete="off" required>
+        <button class="search-btn" type="submit">RECHERCHER ↗</button>
+      </form>
+
+      <div class="result-box" id="phoneResult" aria-live="polite">
+        <div class="result-label">[ PHONE ENGINE ]</div>
+        Saisis un numéro pour rechercher des références publiques.
+      </div>
+
+      <p class="hint">
+        Les résultats sont des pages de recherche publiques, pas une identification
+        garantie du propriétaire du numéro.
+      </p>
+    </section>
+
+    <!-- TIKTOK -->
+    <section class="content-section" id="tiktok">
+      <h2 class="section-title">TikTok Lookup</h2>
+      <p class="description">
+        Recherche un profil TikTok public par nom d'utilisateur.
+      </p>
+
+      <form class="search-form" id="tiktokForm">
+        <input class="search-input" id="tiktokInput"
+          placeholder="Nom d'utilisateur TikTok..."
+          autocomplete="off" required>
+        <button class="search-btn" type="submit">RECHERCHER ↗</button>
+      </form>
+
+      <div class="result-box" id="tiktokResult" aria-live="polite">
+        <div class="result-label">[ TIKTOK ENGINE ]</div>
+        En attente d'un nom d'utilisateur.
+      </div>
+
+      <p class="hint">
+        Les profils privés et les données non publiques ne sont pas accessibles.
+      </p>
+    </section>
+
+    <!-- TERMINAL -->
+    <section class="content-section" id="terminal">
+      <h2 class="section-title">Web Terminal</h2>
+      <p class="description">
+        Un terminal de démonstration directement dans ton navigateur.
+      </p>
+
+      <form class="search-form" id="termForm">
+        <input class="search-input" id="termInput"
+          placeholder="Tape help puis Entrée..."
+          autocomplete="off" spellcheck="false" required>
+        <button class="search-btn" type="submit">EXÉCUTER ↵</button>
+      </form>
+
+      <div class="result-box" id="termResult" aria-live="polite">TOOLBOX TERMINAL v1.0
+Tape "help" pour afficher les commandes disponibles.
+&gt; <span class="cursor">_</span></div>
+
+      <p class="hint">
+        Terminal simulé : les commandes s'exécutent dans la page, pas sur ton iPhone
+        ni sur un serveur distant.
+      </p>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    TOOLBOX LOOKUP © 2026 — PUBLIC TOOLS ONLY
+  </footer>
+</div>
+
+<script>
+const tabs = document.querySelectorAll(".tab-btn");
+const sections = document.querySelectorAll(".content-section");
+
+tabs.forEach(button => {
+  button.addEventListener("click", () => {
+    tabs.forEach(tab => tab.classList.remove("active"));
+    sections.forEach(section => section.classList.remove("active"));
+
+    button.classList.add("active");
+    document.getElementById(button.dataset.tab).classList.add("active");
+  });
+});
+
+function showResult(id, title, message) {
+  const box = document.getElementById(id);
+  box.replaceChildren();
+
+  const heading = document.createElement("div");
+  heading.className = "result-label";
+  heading.textContent = title;
+  box.appendChild(heading);
+
+  if (typeof message === "string") {
+    box.appendChild(document.createTextNode(message));
+  } else {
+    box.appendChild(message);
+  }
+}
+
+function addLink(parent, label, url) {
+  const link = document.createElement("a");
+  link.href = url;
+  link.target = "_blank";
+  link.rel = "noopener noreferrer";
+  link.textContent = label;
+  parent.appendChild(link);
+}
+
+// SNAPCHAT
+document.getElementById("snapForm").addEventListener("submit", event => {
+  event.preventDefault();
+  const username = document.getElementById("snapInput").value
+    .trim().replace(/^@/, "");
+
+  if (!/^[a-zA-Z0-9._-]{1,50}$/.test(username)) {
+    showResult("snapResult", "[ ERREUR ]",
+      "Vérifie le nom d'utilisateur.");
+    return;
+  }
+
+  const content = document.createDocumentFragment();
+  content.appendChild(document.createTextNode("Profil demandé : @" + username + "\n"));
+  addLink(content, "Ouvrir le profil Snapchat ↗",
+    "https://www.snapchat.com/add/" + encodeURIComponent(username));
+
+  showResult("snapResult", "[ RÉSULTAT ]", content);
+});
+
+// IP LOOKUP
+document.getElementById("ipForm").addEventListener("submit", event => {
+  event.preventDefault();
+  const ip = document.getElementById("ipInput").value.trim();
+
+  const ipv4 = /^(?:(?:25[0-5]|2[0-4]\d|1?\d?\d)\.){3}(?:25[0-5]|2[0-4]\d|1?\d?\d)$/;
+  const ipv6 = /^[0-9a-fA-F:]{3,39}$/;
+
+  if (!ipv4.test(ip) && !ipv6.test(ip)) {
+    showResult("ipResult", "[ ERREUR ]",
+      "Adresse IP invalide. Entre une IPv4 ou IPv6 valide.");
+    return;
+  }
+
+  const content = document.createDocumentFragment();
+  content.appendChild(document.createTextNode(
+    "Adresse saisie : " + ip + "\n\n"
+  ));
+
+  addLink(content, "Consulter les informations IP ↗",
+    "https://ipinfo.io/" + encodeURIComponent(ip));
+
+  showResult("ipResult", "[ IP LOOKUP ]", content);
+});
+
+// PHONE
+document.getElementById("phoneForm").addEventListener("submit", event => {
+  event.preventDefault();
+  const number = document.getElementById("phoneInput").value.trim();
+
+  if (!/^\+?[0-9\s().-]{6,25}$/.test(number)) {
+    showResult("phoneResult", "[ ERREUR ]",
+      "Vérifie le format du numéro.");
+    return;
+  }
+
+  const content = document.createDocumentFragment();
+  content.appendChild(document.createTextNode(
+    "Numéro recherché : " + number + "\n\n"
+  ));
+
+  addLink(content, "Rechercher sur le Web ↗",
+    "https://www.google.com/search?q=" +
+    encodeURIComponent('"' + number + '"'));
+
+  showResult("phoneResult", "[ PHONE LOOKUP ]", content);
+});
+
+// TIKTOK
+document.getElementById("tiktokForm").addEventListener("submit", event => {
+  event.preventDefault();
+  const username = document.getElementById("tiktokInput").value
+    .trim().replace(/^@/, "");
+
+  if (!/^[a-zA-Z0-9._]{1,50}$/.test(username)) {
+    showResult("tiktokResult", "[ ERREUR ]",
+      "Vérifie le nom d'utilisateur.");
+    return;
+  }
+
+  const content = document.createDocumentFragment();
+  content.appendChild(document.createTextNode("Profil demandé : @" + username + "\n"));
+  addLink(content, "Ouvrir le profil TikTok ↗",
+    "https://www.tiktok.com/@" + encodeURIComponent(username));
+
+  showResult("tiktokResult", "[ RÉSULTAT ]", content);
+});
+
+// TERMINAL DE DÉMONSTRATION
+const terminalHistory = [];
+
+document.getElementById("termForm").addEventListener("submit", event => {
+  event.preventDefault();
+
+  const input = document.getElementById("termInput");
+  const command = input.value.trim();
+  if (!command) return;
+
+  const allowed = {
+    help: "Commandes disponibles :\nhelp    - Afficher l'aide\nclear   - Effacer l'écran\nabout   - Informations sur Toolbox\ndate    - Afficher la date locale\nstatus  - Afficher l'état de la démo",
+    about: "TOOLBOX LOOKUP\nVersion : 1.0\nMode : terminal simulé\nEnvironnement : navigateur web",
+    date: "Date locale : " + new Date().toLocaleString("fr-FR"),
+    status: "Interface : opérationnelle\nTerminal : simulation active\nAccès système : aucun"
+  };
+
+  if (command.toLowerCase() === "clear") {
+    terminalHistory.length = 0;
+  } else {
+    const response = allowed[command.toLowerCase()] ||
+      "Commande inconnue : " + command + "\nTape help pour afficher les commandes.";
+
+    terminalHistory.push("> " + command + "\n" + response);
+  }
+
+  const output = document.getElementById("termResult");
+  output.textContent = "TOOLBOX TERMINAL v1.0\n" +
+    terminalHistory.join("\n\n") + "\n> ";
+
+  input.value = "";
+});
+</script>
+</body>
+</html>
